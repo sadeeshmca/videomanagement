@@ -50,7 +50,7 @@
     "dev": "vite dev",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node .output/server/index.mjs"
+    "start": "node dist/server/index.js"
   },
   "sideEffects": false,
   "type": "module",

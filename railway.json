@@ -2,10 +2,10 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "bun install && DEPLOY_TARGET=node bun run build"
+    "buildCommand": "bun install && DEPLOY_TARGET=node bun run build && echo '--- Build output ---' && find dist .output -type f -name '*.js' -o -name '*.mjs' 2>/dev/null | head -30 || true"
   },
   "deploy": {
-    "startCommand": "node .output/server/index.mjs",
+    "startCommand": "node dist/server/index.js",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
