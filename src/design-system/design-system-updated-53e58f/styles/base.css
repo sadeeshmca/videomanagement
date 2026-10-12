@@ -1,0 +1,102 @@
+/* Base typography + heading scale.
+   - Display family (FK Screamer) is ALWAYS uppercase with +1px tracking.
+   - Italics inside headings auto-swap to FK Screamer Italic.
+   - Body text uses Untitled Sans, 16/1.5.
+   - Headings carry NO font-size by default — pair with .h-hero/.h-section/etc. */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-black);
+  background-color: #FFFFFF;
+}
+
+h1, h2, h3, h4, h5,
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em; /* ~1px at common sizes */
+  line-height: 1.05;
+  color: inherit;
+}
+
+/* Italic inside any display heading swaps to the italic cut of the
+   display family (declared in fonts.css when shipped). */
+h1 em, h2 em, h3 em, h4 em, h5 em,
+.h-display em,
+h1 i, h2 i, h3 i, h4 i, h5 i,
+.h-display i {
+  font-style: italic;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* Heading size scale (§3.3) — apply as a utility class on any heading.
+   Re-asserts display family + 700 weight + uppercase here because Tailwind's
+   preflight (loaded after these styles via @tailwind base) resets h1–h6 to
+   font-weight: inherit, which would otherwise drop our headings to body 400. */
+.h-hero,
+.h-section,
+.h-standard,
+.h-compact,
+.h-dense {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+.h-hero     { font-size: clamp(64px, 8vw,   120px); }
+.h-section  { font-size: clamp(48px, 6vw,    96px); }
+.h-standard { font-size: clamp(40px, 5vw,    80px); }
+.h-compact  { font-size: clamp(32px, 4vw,    64px); }
+.h-dense    { font-size: clamp(28px, 3vw,    56px); }
+
+/* Stat blocks — Noe Display numeral, Untitled Sans label. */
+.stat-number,
+.stat-unit,
+.step-num {
+  font-family: var(--font-stat);
+  font-weight: 700;
+  color: var(--color-blue-spruce);
+  font-size: clamp(56px, 7vw, 112px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.stat-label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Hyperlinks — Midnight on light surfaces; Turquoise inside dark surfaces. */
+a {
+  color: var(--color-midnight);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+a:hover { text-decoration-thickness: 2px; }
+
+/* Focus rings — 2px Blue Spruce on light, 2px Turquoise on dark surfaces. */
+:focus-visible {
+  outline: 2px solid var(--color-blue-spruce);
+  outline-offset: 2px;
+}
+
+/* Body small / fine print. */
+small, .text-fine {
+  font-size: 13px;
+  line-height: 1.45;
+}

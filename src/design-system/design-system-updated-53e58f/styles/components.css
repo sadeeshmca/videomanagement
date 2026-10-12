@@ -1,0 +1,241 @@
+/* Component utility classes.
+   The cascading-by-surface system means most components do NOT need
+   surface-aware variants — they inherit from the parent surface. */
+
+/* --- Buttons ------------------------------------------------------------ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background-color: var(--color-blue-spruce);
+  color: #FFFFFF;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.btn-primary:hover { background-color: var(--color-navy-blue); }
+
+/* On dark surfaces, button inverts to White fill / Black text. */
+.bg-surface-spruce .btn-primary,
+.bg-surface-navy .btn-primary,
+.bg-surface-black .btn-primary {
+  background-color: #FFFFFF;
+  color: var(--color-black);
+  border-color: #FFFFFF;
+}
+.bg-surface-spruce .btn-primary:hover,
+.bg-surface-navy .btn-primary:hover,
+.bg-surface-black .btn-primary:hover {
+  background-color: var(--color-turquoise);
+  color: var(--color-black);
+  border-color: var(--color-turquoise);
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* --- Chips -------------------------------------------------------------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+  background-color: var(--color-light-gray);
+  color: var(--color-black);
+  border: 1px solid transparent;
+}
+.chip-strong {
+  background-color: var(--color-blue-spruce);
+  color: #FFFFFF;
+}
+.chip-dark {
+  background-color: var(--color-black);
+  color: #FFFFFF;
+}
+.chip-alert {
+  background-color: transparent;
+  color: var(--color-black);
+  border-color: var(--color-poppy); /* Poppy: border only, never as bg/text. */
+}
+
+/* --- Bullets (.bullets) ------------------------------------------------- */
+/* Inline-SVG square marker. NEVER a Unicode bullet glyph (• ‣ ▪ ◦ etc.). */
+.bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.bullets li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 10px;
+  height: 10px;
+  /* Navy Blue square on light surfaces (default) — inline SVG, no background-color. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect width='10' height='10' fill='%23024879'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 10px 10px;
+}
+/* Turquoise square inside dark surfaces. */
+.bg-surface-spruce .bullets li::before,
+.bg-surface-navy .bullets li::before,
+.bg-surface-black .bullets li::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect width='10' height='10' fill='%2371D8C5'/></svg>");
+}
+
+/* --- Tables ------------------------------------------------------------- */
+.table-deck,
+.table-document {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.table-deck thead th,
+.table-document thead th {
+  background-color: var(--color-navy-blue);
+  color: #FFFFFF;
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+}
+.table-deck tbody td,
+.table-document tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-light-gray);
+}
+.table-deck tbody td:first-child,
+.table-document tbody td:first-child {
+  font-weight: 500;
+}
+.table-deck tbody tr:nth-child(even),
+.table-document tbody tr:nth-child(even) {
+  background-color: var(--color-light-gray);
+}
+
+/* --- Step cards (3-step) ------------------------------------------------
+   Class-class specificity beats the surface cascade so per-step colors win.
+   Steps 1 and 2 must have a White/Sky/Light Gray gutter between them. */
+.step-card {
+  padding: 24px;
+  border-radius: 0;
+  border: 1px solid var(--color-light-gray);
+}
+.step-card.step-card--1 { background-color: var(--color-blue-spruce); color: #FFFFFF; }
+.step-card.step-card--2 { background-color: var(--color-navy-blue);   color: #FFFFFF; }
+.step-card.step-card--3 { background-color: var(--color-turquoise);   color: var(--color-black); }
+
+.step-card.step-card--1,
+.step-card.step-card--1 .step-title,
+.step-card.step-card--1 .step-num,
+.step-card.step-card--1 .step-copy,
+.step-card.step-card--1 h1,
+.step-card.step-card--1 h2,
+.step-card.step-card--1 h3,
+.step-card.step-card--1 h4,
+.step-card.step-card--1 h5,
+.step-card.step-card--1 p {
+  color: #FFFFFF;
+}
+
+.step-card.step-card--2,
+.step-card.step-card--2 .step-title,
+.step-card.step-card--2 .step-num,
+.step-card.step-card--2 .step-copy,
+.step-card.step-card--2 h1,
+.step-card.step-card--2 h2,
+.step-card.step-card--2 h3,
+.step-card.step-card--2 h4,
+.step-card.step-card--2 h5,
+.step-card.step-card--2 p {
+  color: #FFFFFF;
+}
+
+.step-card.step-card--3,
+.step-card.step-card--3 .step-title,
+.step-card.step-card--3 .step-num,
+.step-card.step-card--3 .step-copy,
+.step-card.step-card--3 h1,
+.step-card.step-card--3 h2,
+.step-card.step-card--3 h3,
+.step-card.step-card--3 h4,
+.step-card.step-card--3 h5,
+.step-card.step-card--3 p {
+  color: var(--color-black);
+}
+
+/* --- Peer-card title sharing (§ no size-stepping within a grid) -------- */
+.grid-2 { --card-title-size: clamp(32px, 4vw, 64px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.grid-3 { --card-title-size: clamp(28px, 3vw, 56px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.grid-4 { --card-title-size: clamp(24px, 2.5vw, 44px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+
+.card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  font-size: var(--card-title-size, clamp(32px, 4vw, 64px));
+}
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* --- Section divider --------------------------------------------------- */
+.section-divider {
+  height: 1px;
+  background-color: var(--color-light-gray);
+  border: 0;
+  margin: 48px 0;
+}
+.bg-surface-spruce .section-divider,
+.bg-surface-navy .section-divider,
+.bg-surface-black .section-divider {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* --- Left accent section ----------------------------------------------- */
+.left-accent {
+  border-left: 4px solid var(--color-turquoise);
+  padding-left: 24px;
+}

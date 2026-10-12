@@ -1,0 +1,61 @@
+@import "./design-system/design-system-updated-53e58f/index.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* User brand guidelines override (deliberate deviation from Perficient tokens) */
+:root {
+  --color-blue-spruce: #A84A05; /* Spice Red - primary accent */
+  --color-navy-blue: #4A2306;   /* Earth Brown - structure */
+  --color-black: #292A2F;       /* Cast Iron Charcoal - text */
+  --color-turquoise: #EAA023;   /* Saffron Gold - highlights */
+  --color-sky: #FEF6EB;         /* Warm Cream */
+  --color-light-gray: #F5E3D6;  /* Border grey */
+  --color-capri: #EAA023;
+  --color-cobalt: #A84A05;
+  --color-midnight: #4A2306;
+  --color-purple: #4A2306;
+  --gradient-primary: linear-gradient(to bottom, #FEF6EB, #FFFFFF);
+  --gradient-perficient-h: linear-gradient(to right, #FEF6EB, #FFFFFF);
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-stat: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-body: "Inter", -apple-system, sans-serif;
+  --background: 38 65% 96%;
+  --foreground: 230 7% 17%;
+}
+body { background: #FEF6EB; line-height: 1.5; }
+
+@layer base {
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  body {
+    font-family: var(--font-body);
+    color: var(--color-black);
+  }
+}
+
+@layer components {
+  .field {
+    @apply w-full border border-light-gray bg-white px-3 py-2 text-sm text-brand-black rounded-md;
+  }
+  .field:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-blue-spruce;
+  }
+  .field-label {
+    @apply mb-1 block text-xs font-medium uppercase tracking-widest;
+  }
+}
+
+/* Brand CTA buttons: spice red, 6px radius, subtle hover lift */
+.btn-primary.btn-primary {
+  background: #A84A05; color: #FFFFFF; border-color: #A84A05;
+  border-radius: 6px; text-transform: none; letter-spacing: 0;
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-primary.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(74,35,6,.18); }

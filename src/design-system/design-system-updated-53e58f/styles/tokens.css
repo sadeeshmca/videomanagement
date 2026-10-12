@@ -1,0 +1,34 @@
+/* Perficient 2026 — design tokens (CSS custom properties).
+   All color, gradient, and font-family tokens live here. Components and
+   utilities reference these vars — never raw hex values. */
+
+:root {
+  /* Core neutrals & primaries — exact hex values per Perficient 2026 spec. */
+  --color-blue-spruce: #075056;   /* Blue Spruce — primary text + brand */
+  --color-navy-blue:   #024879;   /* Navy Blue — heading + dark surface */
+  --color-black:       #1B2227;   /* Brand Black */
+  --color-turquoise:   #71D8C5;   /* Accent — dark surfaces / links / focus */
+  --color-sky:         #C5DCEE;   /* Sky tint — soft surface */
+  --color-light-gray:  #DFE7ED;   /* Light Gray — surface + zebra */
+
+  /* Tertiaries — restricted. Do not use as text or background except where
+     the spec explicitly permits (Midnight on <a>, Poppy as border/icon). */
+  --color-capri:    #4AB3E9;
+  --color-cobalt:   #324EB5;
+  --color-midnight: #001A6E;
+  --color-purple:   #6F1D82;
+  --color-poppy:    #FE3A39;
+
+  /* Sanctioned gradients — exactly two. Both are LIGHT (Sky tones). */
+  --gradient-primary: linear-gradient(to bottom, #AACBE4 0%, #DEF0FF 50%, #EEF7FF 100%);
+  --gradient-perficient-h: linear-gradient(to right, #EEF7FF, #DEF0FF, #AACBE4);
+
+  /* Type families. Real .woff2 files live in /public/fonts/; see fonts.css. */
+  --font-display: "FK Screamer Legacy", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-stat: "Noe Display", Georgia, "Times New Roman", serif;
+  --font-body: "Untitled Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+
+  /* shadcn HSL hooks (background/foreground) — kept minimal. */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 5%;
+}

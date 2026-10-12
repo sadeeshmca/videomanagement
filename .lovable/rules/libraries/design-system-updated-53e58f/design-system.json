@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "name": "Design System Updated",
+    "package": "@ws-workspace-mlcuv2egroejo1uxzp/5703a5f2-1c06-4155-9d23-371a72c9a498",
+    "version": "1.0.5",
+    "framework": "react",
+    "css_framework": "tailwind",
+    "starter_template": "custom_design_system",
+    "theme_files": [
+      "src/styles/tokens.css"
+    ],
+    "source_type": "local",
+    "source_manifest": {
+      ".gitignore": "d9566700e8535935d03c1583474d790c",
+      ".lovable/meta.yaml": "8794970d6049858cc148d2b86f7a2b22",
+      ".lovable/plan.md": "67353fdef1c44013633a37d1175c4d92",
+      ".lovable/sources.yaml": "348b687b6eecbd4bf140547f26da127d",
+      ".lovable/system.md": "2744adcbb96eeeff0671575d901e1b59",
+      "README.md": "5f511e33435ccfbda11597ffa69b0c43",
+      "eslint.config.js": "31c0881fdd8500aa4d0aa963079713ae",
+      "index.html": "f5edcebc2ffaa11370b7276f99a7e186",
+      "lovable.toml": "f1be3f831cf4a27d2480b358eea89e31",
+      "package.json": "a8e4c03ab0cce853df901c56daefc3d2",
+      "postcss.config.js": "c6b223994720cbbb46eb850686641b34",
+      "public/assets/Logo_Perficient_Full-Color.svg": "f58584631ac9fe4ff397cfd994a8f303",
+      "public/assets/Logo_Perficient_White.svg": "015b5376ca3a4bd46d769b5069456cc5",
+      "public/assets/README.md": "c1ab026723fed273196a1f5b65b565b5",
+      "public/favicon.ico": "9f504444f85a5af2eef9264b02ae40be",
+      "public/fonts/FKScreamerLegacy-Upright.woff2": "c24412eaa08d4a48b461b8e809bb0025",
+      "public/fonts/NoeDisplay-Bold.woff2": "65d8cde04ebc42f078b1b290778ee7b6",
+      "public/fonts/NoeDisplay-Regular.woff2": "42a533c7215fda74c5f2582973ca3858",
+      "public/fonts/README.md": "8e092961b2fdd86a4b9d74bc766ead08",
+      "public/fonts/untitled-sans-bold-italic.woff2": "ffb1753e5aa1b3ae429c6030f671a16b",
+      "public/fonts/untitled-sans-bold.woff2": "a43f478f73ec0186bfc5edc391384c4d",
+      "public/fonts/untitled-sans-regular-italic.woff2": "975f34890cf8c527424e4e4cdfa41e10",
+      "public/fonts/untitled-sans-regular.woff2": "f1262b39cccb51ab0f5f10a2a4b5eaaa",
+      "public/placeholder.svg": "35707bd9960ba5281c72af927b79291f",
+      "public/robots.txt": "f9dff89adf98833e676de2205921996a",
+      "src/App.css": "d41d8cd98f00b204e9800998ecf8427e",
+      "src/App.tsx": "572800dd69405251e6a319101bc488c1",
+      "src/components/brand/Arrow.tsx": "956c26132c2f1e61c013621ffb29ba04",
+      "src/components/brand/BrandVoiceClose.tsx": "d8e8d19e1f74f57fa220cbffdad432b9",
+      "src/components/brand/Bullets.tsx": "0ab3d3ebcb549ce9b27736cee849315f",
+      "src/components/brand/LeftAccentSection.tsx": "73e3fa4d1172a70d4c0dca3ac20a4f61",
+      "src/components/brand/Logo.tsx": "07bbf90e0b0d9fc723c9b42cac5c83c0",
+      "src/components/brand/SectionDivider.tsx": "1ce4328620d83dec31fa854fae6ae9f4",
+      "src/components/brand/StatBlock.tsx": "bcc7afaa18819af7cef44cb04f7e0b3d",
+      "src/components/brand/StepCards.tsx": "af3b27fa8e70b1ecec5624201c9c13a8",
+      "src/components/ui/badge.tsx": "de651b7bfd736972ba405831d6364ef8",
+      "src/components/ui/button.tsx": "929565cf976e9174310d1480921ae89b",
+      "src/components/ui/card.tsx": "c89a615aa10aa7a67964dd28f3c562f4",
+      "src/components/ui/table.tsx": "351da961165277c208dd72359ebea7e6",
+      "src/index.css": "b9169cca15b39962ca7cc0810393ada8",
+      "src/index.ts": "f5472b98d86a97b5a0bc2b6eca54b16e",
+      "src/lib/utils.ts": "d9837f38cc05303254571985e3164050",
+      "src/main.tsx": "092c6937f28c1dff19a7d561f5f98360",
+      "src/pages/Index.tsx": "0d73134df0489a3b9135ed40ad19c7f7",
+      "src/pages/NotFound.tsx": "f18cd0cb2de45f92fb3c0ca20c34e6be",
+      "src/pages/Showcase.tsx": "e7838c946aa074b46a69baf2daa374ad",
+      "src/styles/base.css": "d57a73f203cb18dd10ac1540a75aa243",
+      "src/styles/components.css": "9adadd88ac533e82c0cde9fea46c97a0",
+      "src/styles/fonts.css": "111952e26edc40216b17a0af9bdc0caf",
+      "src/styles/surfaces.css": "bebaac020af3b1557477f3f85a16e6da",
+      "src/styles/tokens.css": "5486730beac47f0f6ea985fa202ce1be",
+      "src/test/example.test.ts": "f7aec10728902324d57cf05ee8a8e57e",
+      "src/test/setup.ts": "3ed816a7adf0e76610ce76bd32744ea0",
+      "src/vite-env.d.ts": "0352474ba2918efe13895edbc3780d94",
+      "tailwind.config.ts": "e87cefce24505d432e5009c73523c4a6",
+      "tsconfig.app.json": "9036c95ea413f9a07f9aa5c7650861a6",
+      "tsconfig.json": "bb72695c901d34a52a46196ba258371d",
+      "tsconfig.node.json": "1417fb05378a1d1102f085e60b20db0e",
+      "vite.config.ts": "978c0733ad7195aa171e5d7f71b2dccf",
+      "vitest.config.ts": "9285ab80c07d5cd1a71aa20c1687352a"
+    },
+    "pipeline_version": 1
+  },
+  "tokens": {
+    "color": [
+      {
+        "name": "--color-blue-spruce",
+        "raw": "#075056",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-navy-blue",
+        "raw": "#024879",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-black",
+        "raw": "#1B2227",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-turquoise",
+        "raw": "#71D8C5",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-sky",
+        "raw": "#C5DCEE",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-light-gray",
+        "raw": "#DFE7ED",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-capri",
+        "raw": "#4AB3E9",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-cobalt",
+        "raw": "#324EB5",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-midnight",
+        "raw": "#001A6E",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-purple",
+        "raw": "#6F1D82",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--color-poppy",
+        "raw": "#FE3A39",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--gradient-primary",
+        "raw": "linear-gradient(to bottom, #AACBE4 0%, #DEF0FF 50%, #EEF7FF 100%)",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--background",
+        "raw": "0 0% 100%",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--foreground",
+        "raw": "0 0% 5%",
+        "source": "src/styles/tokens.css"
+      }
+    ],
+    "typography": [
+      {
+        "name": "--font-display",
+        "raw": "\"FK Screamer Legacy\", \"Arial Narrow\", \"Helvetica Neue\", Arial, sans-serif",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--font-stat",
+        "raw": "\"Noe Display\", Georgia, \"Times New Roman\", serif",
+        "source": "src/styles/tokens.css"
+      },
+      {
+        "name": "--font-body",
+        "raw": "\"Untitled Sans\", -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", Arial, sans-serif",
+        "source": "src/styles/tokens.css"
+      }
+    ],
+    "other": [
+      {
+        "name": "--gradient-perficient-h",
+        "raw": "linear-gradient(to right, #EEF7FF, #DEF0FF, #AACBE4)",
+        "source": "src/styles/tokens.css"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "file": "src/components/ui/button.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Card",
+      "file": "src/components/ui/card.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "CardHeader",
+      "file": "src/components/ui/card.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "CardTitle",
+      "file": "src/components/ui/card.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "CardContent",
+      "file": "src/components/ui/card.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Badge",
+      "file": "src/components/ui/badge.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Table",
+      "file": "src/components/ui/table.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "THead",
+      "file": "src/components/ui/table.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "TBody",
+      "file": "src/components/ui/table.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Logo",
+      "file": "src/components/brand/Logo.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "StatBlock",
+      "file": "src/components/brand/StatBlock.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "StepCards",
+      "file": "src/components/brand/StepCards.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "SectionDivider",
+      "file": "src/components/brand/SectionDivider.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "LeftAccentSection",
+      "file": "src/components/brand/LeftAccentSection.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Arrow",
+      "file": "src/components/brand/Arrow.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "BrandVoiceClose",
+      "file": "src/components/brand/BrandVoiceClose.tsx",
+      "import_path": ""
+    },
+    {
+      "name": "Bullets",
+      "file": "src/components/brand/Bullets.tsx",
+      "import_path": ""
+    }
+  ]
+}

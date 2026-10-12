@@ -1,0 +1,1 @@
+export const SectionDivider = () => <hr className="section-divider" />;
