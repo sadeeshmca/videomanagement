@@ -8,9 +8,8 @@ import { componentTagger } from "lovable-tagger";
 import { mockupPreviewPlugin } from "./mockupPreviewPlugin";
 
 export default defineConfig(({ command, mode }) => {
-  // Cloudflare Workers plugin only on build (produces the worker output);
-  // the workerd runtime isn't available for the dev server.
-  const useCloudflare = command === "build";
+  // Use Cloudflare Workers plugin only when not targeting Node.js (Railway, etc.)
+  const useCloudflare = command === "build" && process.env.DEPLOY_TARGET !== "node";
 
   return {
     server: {

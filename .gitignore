@@ -34,5 +34,11 @@ src/.generated/
 *.sln
 *.sw?
 
+# Environment variables
+.env
+
+# Build output
+.output
+
 # Lovable sandbox workspace directory
 .workspace/
