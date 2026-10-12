@@ -2,10 +2,10 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "bun install && DEPLOY_TARGET=node bun run build && echo '=== Build output ===' && (find . -path ./node_modules -prune -o -type f \\( -name '*.js' -o -name '*.mjs' \\) -print | grep -E '(dist|output|build|server)' | head -40) && echo '=== Top-level dirs ===' && ls -la dist/ .output/ .vinxi/ 2>/dev/null || true"
+    "buildCommand": "bun install && bun run build"
   },
   "deploy": {
-    "startCommand": "echo '=== Looking for server entry ===' && find . -path ./node_modules -prune -o -type f \\( -name '*.js' -o -name '*.mjs' \\) -print | grep -iE '(server|ssr|entry)' | head -20 && echo '=== Trying to start ===' && node dist/server/index.js 2>/dev/null || node .output/server/index.mjs 2>/dev/null || node .vinxi/output/server/index.mjs 2>/dev/null || (echo 'ERROR: Could not find server entry point' && exit 1)",
+    "startCommand": "bun run start",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
