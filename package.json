@@ -46,12 +46,12 @@
   "private": true,
   "scripts": {
     "build": "DEPLOY_TARGET=node vite build",
-    "postbuild": "echo '=== BUILD OUTPUT ===' && find . -path ./node_modules -prune -o \\( -name '*.js' -o -name '*.mjs' \\) -print 2>/dev/null | grep -vE 'node_modules|src/' | head -50 && echo '=== DIRS ===' && ls -d dist/ .output/ .vinxi/ 2>/dev/null; true",
     "build:dev": "vite build --mode development",
     "dev": "vite dev",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "ls -la dist/ .output/ 2>/dev/null; node dist/server/index.js 2>/dev/null || node .output/server/index.mjs 2>/dev/null || (echo 'No server entry found — listing all JS files:' && find . -path ./node_modules -prune -o -name '*.js' -print | grep -v node_modules | head -30 && exit 1)"
+    "start": "node server.mjs",
+    "db:migrate": "drizzle-kit migrate"
   },
   "sideEffects": false,
   "type": "module",
