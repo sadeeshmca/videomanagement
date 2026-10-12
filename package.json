@@ -53,5 +53,8 @@
     "start": "node .output/server/index.mjs"
   },
   "sideEffects": false,
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
 }
