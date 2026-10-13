@@ -1,6 +1,3 @@
-console.log("ENV CHECK — DATABASE_URL set:", !!process.env.DATABASE_URL);
-console.log("ENV CHECK — all DB-related vars:", Object.keys(process.env).filter(k => /database|postgres|pg/i.test(k)).join(", ") || "(none)");
-
 import express from "express";
 import cors from "cors";
 import path from "node:path";
