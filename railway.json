@@ -2,14 +2,14 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "bun run build"
+    "buildCommand": "npm install && npm run build"
   },
   "deploy": {
-    "startCommand": "node server.mjs",
+    "startCommand": "NODE_ENV=production npm start",
     "preDeployCommand": [
-      "bun run db:migrate"
+      "npx drizzle-kit migrate"
     ],
-    "healthcheckPath": "/",
+    "healthcheckPath": "/api/health",
     "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3

@@ -3,7 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button, TBody, THead, Table } from "@/design-system/design-system-updated-53e58f";
 import { PageHeader } from "@/components/PageHeader";
-import { useStore } from "@/lib/demo-store";
+import { useAuth } from "@/lib/auth-context";
+import { useAudit } from "@/lib/hooks";
 import { toCsv } from "@/lib/format";
 
 export const Route = createFileRoute("/app/admin/audit")({
@@ -12,13 +13,15 @@ export const Route = createFileRoute("/app/admin/audit")({
 });
 
 function AuditLog() {
-  const s = useStore();
+  const { user } = useAuth();
   const [q, setQ] = useState("");
-  if (s.role !== "super_admin") return <p>Only Super Admins can view the audit log.</p>;
-  const rows = s.audit.filter((a) => !q || `${a.actor} ${a.action} ${a.target}`.toLowerCase().includes(q.toLowerCase()));
+  const { data } = useAudit({ q, page: 0 });
+  const rows = data?.rows ?? [];
+
+  if (user?.role !== "super_admin") return <p>Only Super Admins can view the audit log.</p>;
 
   function exportCsv() {
-    const blob = new Blob([toCsv(rows)], { type: "text/csv" });
+    const blob = new Blob([toCsv(rows as unknown as Record<string, unknown>[])], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob); a.download = "audit-log.csv"; a.click();
     URL.revokeObjectURL(a.href);
@@ -34,7 +37,7 @@ function AuditLog() {
           <THead><tr><th>When</th><th>Who</th><th>Action</th><th>Target</th></tr></THead>
           <TBody>
             {rows.map((a) => (
-              <tr key={a.id}><td>{a.at.slice(0, 16).replace("T", " ")}</td><td>{a.actor}</td><td>{a.action}</td><td>{a.target || "-"}</td></tr>
+              <tr key={a.id}><td>{a.createdAt.slice(0, 16).replace("T", " ")}</td><td>{a.actor}</td><td>{a.action}</td><td>{a.target || "-"}</td></tr>
             ))}
           </TBody>
         </Table>

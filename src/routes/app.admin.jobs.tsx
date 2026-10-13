@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { StatBlock, TBody, THead, Table } from "@/design-system/design-system-updated-53e58f";
 import { PageHeader } from "@/components/PageHeader";
-import { useStore } from "@/lib/demo-store";
+import { useAuth } from "@/lib/auth-context";
+import { useBackups } from "@/lib/hooks";
 import { formatBytes } from "@/lib/format";
 import { statusBadge } from "./app.backups";
 
@@ -11,9 +12,12 @@ export const Route = createFileRoute("/app/admin/jobs")({
 });
 
 function Jobs() {
-  const s = useStore();
-  if (s.role !== "super_admin") return <p>Only Super Admins can view this page.</p>;
-  const count = (st: string) => s.backups.filter((b) => b.status === st).length;
+  const { user } = useAuth();
+  const { data: backups = [] } = useBackups();
+
+  if (user?.role !== "super_admin") return <p>Only Super Admins can view this page.</p>;
+
+  const count = (st: string) => backups.filter((b) => b.status === st).length;
   return (
     <>
       <PageHeader eyebrow="Super Admin" title="Backup jobs" />
@@ -27,10 +31,10 @@ function Jobs() {
         <Table>
           <THead><tr><th>Started</th><th>User</th><th>Type</th><th>Status</th><th>Videos</th><th>Size</th></tr></THead>
           <TBody>
-            {s.backups.map((b) => (
+            {backups.map((b) => (
               <tr key={b.id}>
                 <td>{b.createdAt.slice(0, 16).replace("T", " ")}</td>
-                <td>{s.users.find((u) => u.id === b.userId)?.name ?? "-"}</td>
+                <td>{b.userName ?? "-"}</td>
                 <td>{b.trigger}</td>
                 <td>{statusBadge(b)}</td>
                 <td>{b.videoCount}</td>

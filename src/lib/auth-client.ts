@@ -1,5 +1,3 @@
-import { createMiddleware } from "@tanstack/react-start";
-
 const TOKEN_KEY = "auth_token";
 
 export function getToken(): string | null {
@@ -14,12 +12,3 @@ export function setToken(token: string) {
 export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
-
-export const attachAuth = createMiddleware({ type: "function" }).client(
-  async ({ next }) => {
-    const token = getToken();
-    return next({
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
-  },
-);

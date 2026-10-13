@@ -1,4 +1,6 @@
-import { pgTable, pgEnum, uuid, text, bigint, boolean, timestamptz, date, integer, jsonb, index, unique, serial } from "drizzle-orm/pg-core";
+import { pgTable, pgEnum, uuid, text, bigint, boolean, timestamp, date, integer, jsonb, index, unique, serial } from "drizzle-orm/pg-core";
+
+const timestamptz = (name: string) => timestamp(name, { withTimezone: true });
 
 export const appRoleEnum = pgEnum("app_role", ["super_admin", "admin", "user"]);
 

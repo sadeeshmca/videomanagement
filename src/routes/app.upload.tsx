@@ -4,8 +4,9 @@ import { useRef, useState } from "react";
 import { Button, Card, CardTitle, LeftAccentSection } from "@/design-system/design-system-updated-53e58f";
 import { Meter } from "@/components/Meter";
 import { PageHeader } from "@/components/PageHeader";
-import { useStore } from "@/lib/demo-store";
-import { DAILY_UPLOAD_CAP, formatBytes } from "@/lib/format";
+import { useAuth } from "@/lib/auth-context";
+import { useDashboard, useUploadVideo } from "@/lib/hooks";
+import { formatBytes } from "@/lib/format";
 
 export const Route = createFileRoute("/app/upload")({
   head: () => ({ meta: [{ title: "Upload | Packing Video Hub" }, { name: "description", content: "Upload a packing video and link it to an order." }] }),
@@ -31,7 +32,9 @@ async function captureThumb(file: File): Promise<string | null> {
 }
 
 function Upload() {
-  const s = useStore();
+  const { user } = useAuth();
+  const { data: dashboard } = useDashboard();
+  const uploadVideo = useUploadVideo();
   const [file, setFile] = useState<File | null>(null);
   const [orderId, setOrderId] = useState("");
   const [sku, setSku] = useState("");
@@ -42,31 +45,33 @@ function Upload() {
   const [thumb, setThumb] = useState<string | null>(null);
   const cancel = useRef(false);
 
-  const siteId = s.me.siteId ?? s.sites[0].id;
+  const siteId = user?.siteId ?? "";
+  const todayUploadBytes = dashboard?.todayUploadBytes ?? 0;
+  const dailyUploadCap = dashboard?.dailyUploadCap ?? 750 * 1024 ** 3;
 
   async function start(e: React.FormEvent) {
     e.preventDefault();
     if (!file || !orderId.trim()) return;
-    if (s.todayUploadBytes + file.size > DAILY_UPLOAD_CAP) { setStatus("error"); setMsg("Today's 750 GB Drive upload limit would be exceeded. Try again tomorrow."); return; }
+    if (todayUploadBytes + file.size > dailyUploadCap) { setStatus("error"); setMsg("Today's 750 GB Drive upload limit would be exceeded. Try again tomorrow."); return; }
     cancel.current = false;
     setStatus("uploading"); setProgress(0); setMsg("");
     setThumb(await captureThumb(file));
     const chunks = Math.max(1, Math.ceil(file.size / CHUNK));
-    // Demo: simulates resumable chunk uploads, with one automatic retry on a failed chunk.
     for (let i = 0; i < chunks; i++) {
       if (cancel.current) { setStatus("idle"); return; }
       await new Promise((r) => setTimeout(r, Math.min(400, 3000 / chunks)));
       setProgress(Math.round(((i + 1) / chunks) * 100));
     }
-    const id = `v${Date.now()}`;
-    s.update((st) => ({
-      todayUploadBytes: st.todayUploadBytes + file.size,
-      videos: [{ id, siteId, ownerId: s.me.id, orderId: orderId.trim(), sku: sku.trim(), customerPhone: phone.trim(),
-        title: file.name, tags: [], sizeBytes: file.size, isPublic: false, orderDate: new Date().toISOString().slice(0, 10),
-        createdAt: new Date().toISOString(), deletedAt: null, thumb: null }, ...st.videos],
-    }));
-    s.log("video.uploaded", orderId.trim());
-    setStatus("done");
+    try {
+      await uploadVideo.mutateAsync({
+        orderId: orderId.trim(), sku: sku.trim(), customerPhone: phone.trim(),
+        title: file.name, tags: [], siteId, sizeBytes: file.size,
+      });
+      setStatus("done");
+    } catch (err) {
+      setStatus("error");
+      setMsg(err instanceof Error ? err.message : "Upload failed.");
+    }
   }
 
   return (
@@ -103,7 +108,7 @@ function Upload() {
               {status === "done" && <Link to="/app/videos" className="btn-link">View in videos</Link>}
             </div>
           </Card>
-          <Meter label="Today's upload limit (Drive)" used={s.todayUploadBytes} total={DAILY_UPLOAD_CAP} />
+          <Meter label="Today's upload limit (Drive)" used={todayUploadBytes} total={dailyUploadCap} />
           <LeftAccentSection>
             <p>Uploads go in 8 MB chunks and resume after network drops. A thumbnail is created from the video automatically.</p>
           </LeftAccentSection>

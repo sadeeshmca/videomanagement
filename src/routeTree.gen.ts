@@ -18,8 +18,6 @@ import { Route as AppBackupsRouteImport } from './routes/app.backups'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppUploadRouteImport } from './routes/app.upload'
 import { Route as AppVideosRouteImport } from './routes/app.videos'
-import { Route as Char91__componentChar93PreviewSplatRouteImport } from './routes/[__component].preview.$'
-import { Route as Char91__mockupChar93PreviewSplatRouteImport } from './routes/[__mockup].preview.$'
 import { Route as AppAdminAuditRouteImport } from './routes/app.admin.audit'
 import { Route as AppAdminBroadcastRouteImport } from './routes/app.admin.broadcast'
 import { Route as AppAdminJobsRouteImport } from './routes/app.admin.jobs'
@@ -70,18 +68,6 @@ const AppVideosRoute = AppVideosRouteImport.update({
   path: '/videos',
   getParentRoute: () => AppRoute,
 } as any)
-const Char91__componentChar93PreviewSplatRoute =
-  Char91__componentChar93PreviewSplatRouteImport.update({
-    id: '/__component/preview/$',
-    path: '/__component/preview/$',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91__mockupChar93PreviewSplatRoute =
-  Char91__mockupChar93PreviewSplatRouteImport.update({
-    id: '/__mockup/preview/$',
-    path: '/__mockup/preview/$',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
   id: '/admin/audit',
   path: '/admin/audit',
@@ -113,8 +99,6 @@ export interface FileRoutesByFullPath {
   '/app/upload': typeof AppUploadRoute
   '/app/videos': typeof AppVideosRoute
   '/app/': typeof AppIndexRoute
-  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
-  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/broadcast': typeof AppAdminBroadcastRoute
   '/app/admin/jobs': typeof AppAdminJobsRoute
@@ -129,8 +113,6 @@ export interface FileRoutesByTo {
   '/app/upload': typeof AppUploadRoute
   '/app/videos': typeof AppVideosRoute
   '/app': typeof AppIndexRoute
-  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
-  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/broadcast': typeof AppAdminBroadcastRoute
   '/app/admin/jobs': typeof AppAdminJobsRoute
@@ -147,8 +129,6 @@ export interface FileRoutesById {
   '/app/upload': typeof AppUploadRoute
   '/app/videos': typeof AppVideosRoute
   '/app/': typeof AppIndexRoute
-  '/__component/preview/$': typeof Char91__componentChar93PreviewSplatRoute
-  '/__mockup/preview/$': typeof Char91__mockupChar93PreviewSplatRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/broadcast': typeof AppAdminBroadcastRoute
   '/app/admin/jobs': typeof AppAdminJobsRoute
@@ -166,8 +146,6 @@ export interface FileRouteTypes {
     | '/app/upload'
     | '/app/videos'
     | '/app/'
-    | '/__component/preview/$'
-    | '/__mockup/preview/$'
     | '/app/admin/audit'
     | '/app/admin/broadcast'
     | '/app/admin/jobs'
@@ -182,8 +160,6 @@ export interface FileRouteTypes {
     | '/app/upload'
     | '/app/videos'
     | '/app'
-    | '/__component/preview/$'
-    | '/__mockup/preview/$'
     | '/app/admin/audit'
     | '/app/admin/broadcast'
     | '/app/admin/jobs'
@@ -199,8 +175,6 @@ export interface FileRouteTypes {
     | '/app/upload'
     | '/app/videos'
     | '/app/'
-    | '/__component/preview/$'
-    | '/__mockup/preview/$'
     | '/app/admin/audit'
     | '/app/admin/broadcast'
     | '/app/admin/jobs'
@@ -212,8 +186,6 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  Char91__componentChar93PreviewSplatRoute: typeof Char91__componentChar93PreviewSplatRoute
-  Char91__mockupChar93PreviewSplatRoute: typeof Char91__mockupChar93PreviewSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -281,20 +253,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppVideosRouteImport
       parentRoute: typeof AppRoute
     }
-    '/__component/preview/$': {
-      id: '/__component/preview/$'
-      path: '/__component/preview/$'
-      fullPath: '/__component/preview/$'
-      preLoaderRoute: typeof Char91__componentChar93PreviewSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/__mockup/preview/$': {
-      id: '/__mockup/preview/$'
-      path: '/__mockup/preview/$'
-      fullPath: '/__mockup/preview/$'
-      preLoaderRoute: typeof Char91__mockupChar93PreviewSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/app/admin/audit': {
       id: '/app/admin/audit'
       path: '/admin/audit'
@@ -357,20 +315,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  Char91__componentChar93PreviewSplatRoute:
-    Char91__componentChar93PreviewSplatRoute,
-  Char91__mockupChar93PreviewSplatRoute: Char91__mockupChar93PreviewSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
