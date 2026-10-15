@@ -12,10 +12,7 @@ export interface LogoProps {
 
 export const Logo = ({ surface = "light", className, width = 140 }: LogoProps) => {
   const enforced = Math.max(100, width);
-  const src =
-    surface === "dark"
-      ? "/assets/Logo_Perficient_White.svg"
-      : "/assets/Logo_Perficient_Full-Color.svg";
+  const src = "/assets/logo.webp";
   return (
     <img
       src={src}
