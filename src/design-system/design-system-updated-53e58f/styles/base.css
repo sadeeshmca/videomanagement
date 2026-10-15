@@ -22,9 +22,9 @@ h1, h2, h3, h4, h5,
 .h-display {
   font-family: var(--font-display);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.01em; /* ~1px at common sizes */
-  line-height: 1.05;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   color: inherit;
 }
 
@@ -50,9 +50,9 @@ h1 i, h2 i, h3 i, h4 i, h5 i,
 .h-dense {
   font-family: var(--font-display);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 1.05;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 .h-hero     { font-size: clamp(64px, 8vw,   120px); }
 .h-section  { font-size: clamp(48px, 6vw,    96px); }

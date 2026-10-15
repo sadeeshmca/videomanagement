@@ -3,6 +3,7 @@ import { eq, and, isNull, isNotNull, ilike, gte, lte, sql, inArray, desc, count 
 import { db } from "../db.js";
 import * as schema from "../../drizzle/schema.js";
 import { requireAuth, isSuperAdmin, logAudit } from "../middleware/auth.js";
+import { isDriveConnected, makePublic, makePrivate } from "../google-drive.js";
 
 const router = Router();
 
@@ -76,6 +77,18 @@ router.patch("/api/videos/:id", requireAuth, async (req, res) => {
     if (!updated) {
       res.status(404).json({ error: "Video not found" });
       return;
+    }
+
+    if (isPublic !== undefined && updated.driveFileId && await isDriveConnected()) {
+      try {
+        if (isPublic) {
+          await makePublic(updated.driveFileId);
+        } else {
+          await makePrivate(updated.driveFileId);
+        }
+      } catch (err) {
+        console.error("Drive permission update failed:", err);
+      }
     }
 
     await logAudit(req.user!.userId, updated.siteId, "video.updated", updated.orderId);

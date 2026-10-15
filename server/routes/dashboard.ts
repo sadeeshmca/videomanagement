@@ -72,6 +72,14 @@ router.get("/api/dashboard", requireAuth, async (req, res) => {
     const [capSetting] = await db.select().from(schema.appSettings).where(eq(schema.appSettings.key, "daily_upload_cap_bytes"));
     const dailyUploadCap = capSetting ? Number(capSetting.value) : 805306368000;
 
+    // Recent uploads
+    const recentUploadsQuery = superAdmin
+      ? db.select({ orderId: schema.videos.orderId, sku: schema.videos.sku }).from(schema.videos).where(isNull(schema.videos.deletedAt)).orderBy(sql`${schema.videos.createdAt} desc`).limit(5)
+      : db.select({ orderId: schema.videos.orderId, sku: schema.videos.sku }).from(schema.videos).where(
+          and(isNull(schema.videos.deletedAt), siteId ? eq(schema.videos.siteId, siteId) : sql`false`)
+        ).orderBy(sql`${schema.videos.createdAt} desc`).limit(5);
+    const recentUploads = await recentUploadsQuery;
+
     res.json({
       videoCount: Number(videoCount),
       userCount: Number(userCount),
@@ -83,6 +91,7 @@ router.get("/api/dashboard", requireAuth, async (req, res) => {
       siteName,
       todayUploadBytes: Number(todayUploadBytes),
       dailyUploadCap,
+      recentUploads,
     });
   } catch (err) {
     console.error("Dashboard error:", err);

@@ -35,7 +35,7 @@ function Videos() {
   const pages = Math.max(1, Math.ceil(total / PAGE));
   const ids = [...sel];
   const toggle = (id: string) => setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  const demoLink = (orderId: string) => `https://drive.google.com/file/d/demo-${orderId}/view`;
+  const driveLink = (v: { driveWebViewLink: string | null }) => v.driveWebViewLink ?? "#";
 
   return (
     <>
@@ -43,7 +43,7 @@ function Videos() {
 
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-5">
         <label className="md:col-span-2"><span className="field-label">Search order, SKU or title</span>
-          <input className="field" value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} placeholder="ORD-10420" /></label>
+          <input className="field" value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} /></label>
         <label><span className="field-label">From</span><input type="date" className="field" value={from} onChange={(e) => setFrom(e.target.value)} /></label>
         <label><span className="field-label">To</span><input type="date" className="field" value={to} onChange={(e) => setTo(e.target.value)} /></label>
         <label><span className="field-label">Show</span>
@@ -104,9 +104,9 @@ function Videos() {
                   <td>
                     {view === "active" ? (
                       <div className="flex flex-wrap gap-4">
-                        <Button variant="link" asChild><a href={demoLink(v.orderId)} target="_blank" rel="noreferrer" aria-label="Open in Drive" title="Open in Drive"><ExternalLink className="h-4 w-4" aria-hidden /></a></Button>
-                        {v.isPublic ? (
-                          <Button variant="link" asChild><a href={whatsappLink(v.customerPhone, v.orderId, demoLink(v.orderId))} target="_blank" rel="noreferrer" aria-label="Share on WhatsApp" title="Share on WhatsApp"><MessageCircle className="h-4 w-4" aria-hidden /></a></Button>
+                        {v.driveWebViewLink && <Button variant="link" asChild><a href={driveLink(v)} target="_blank" rel="noreferrer" aria-label="Open in Drive" title="Open in Drive"><ExternalLink className="h-4 w-4" aria-hidden /></a></Button>}
+                        {v.isPublic && v.driveWebViewLink ? (
+                          <Button variant="link" asChild><a href={whatsappLink(v.customerPhone, v.orderId, driveLink(v))} target="_blank" rel="noreferrer" aria-label="Share on WhatsApp" title="Share on WhatsApp"><MessageCircle className="h-4 w-4" aria-hidden /></a></Button>
                         ) : <span className="inline-block h-4 w-4" aria-hidden />}
                         <Button variant="link" aria-label="Delete" title="Delete" onClick={() => deleteVideos.mutate([v.id])}><Trash2 className="h-4 w-4" aria-hidden /></Button>
                       </div>

@@ -168,7 +168,7 @@ export function useCreateBroadcast() {
 export function useUploadVideo() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: {
+    mutationFn: async (body: {
       orderId: string;
       sku: string;
       customerPhone: string;
@@ -176,7 +176,30 @@ export function useUploadVideo() {
       tags: string[];
       siteId: string;
       sizeBytes: number;
-    }) => api.post("/upload", body),
+      file?: File;
+    }) => {
+      const formData = new FormData();
+      if (body.file) formData.append("file", body.file);
+      formData.append("orderId", body.orderId);
+      formData.append("sku", body.sku);
+      formData.append("customerPhone", body.customerPhone);
+      formData.append("title", body.title);
+      formData.append("tags", JSON.stringify(body.tags));
+      formData.append("siteId", body.siteId);
+      formData.append("sizeBytes", String(body.sizeBytes));
+
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || res.statusText);
+      }
+      return res.json();
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["videos"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
@@ -222,5 +245,21 @@ export function useSites() {
   return useQuery({
     queryKey: ["sites"],
     queryFn: () => api.get<Site[]>("/sites"),
+  });
+}
+
+export function useDriveStatus() {
+  return useQuery({
+    queryKey: ["drive-status"],
+    queryFn: () => api.get<{ connected: boolean }>("/drive/status"),
+  });
+}
+
+export function useConnectDrive() {
+  return useMutation({
+    mutationFn: async () => {
+      const { url } = await api.get<{ url: string }>("/auth/google");
+      return url;
+    },
   });
 }

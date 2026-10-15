@@ -5,7 +5,7 @@ import { Button, Card, CardTitle, LeftAccentSection } from "@/design-system/desi
 import { Meter } from "@/components/Meter";
 import { PageHeader } from "@/components/PageHeader";
 import { useAuth } from "@/lib/auth-context";
-import { useDashboard, useUploadVideo } from "@/lib/hooks";
+import { useDashboard, useUploadVideo, useDriveStatus } from "@/lib/hooks";
 import { formatBytes } from "@/lib/format";
 
 export const Route = createFileRoute("/app/upload")({
@@ -65,7 +65,7 @@ function Upload() {
     try {
       await uploadVideo.mutateAsync({
         orderId: orderId.trim(), sku: sku.trim(), customerPhone: phone.trim(),
-        title: file.name, tags: [], siteId, sizeBytes: file.size,
+        title: file.name, tags: [], siteId, sizeBytes: file.size, file,
       });
       setStatus("done");
     } catch (err) {
@@ -84,11 +84,11 @@ function Upload() {
             <label><span className="field-label">Video file</span>
               <input className="field" type="file" accept="video/*" required onChange={(e) => { setFile(e.target.files?.[0] ?? null); setStatus("idle"); }} /></label>
             <label><span className="field-label">Order ID</span>
-              <input className="field" required maxLength={64} value={orderId} onChange={(e) => setOrderId(e.target.value)} placeholder="ORD-10500" /></label>
+              <input className="field" required maxLength={64} value={orderId} onChange={(e) => setOrderId(e.target.value)} /></label>
             <label><span className="field-label">SKU</span>
               <input className="field" maxLength={64} value={sku} onChange={(e) => setSku(e.target.value)} /></label>
             <label><span className="field-label">Customer WhatsApp number</span>
-              <input className="field" maxLength={20} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" /></label>
+              <input className="field" maxLength={20} value={phone} onChange={(e) => setPhone(e.target.value)} /></label>
             {file && <p className="text-fine">{file.name}, {formatBytes(file.size)}, {Math.max(1, Math.ceil(file.size / CHUNK))} chunks</p>}
             <div className="flex gap-4">
               <Button type="submit" disabled={status === "uploading"}><UploadCloud className="h-4 w-4" aria-hidden />Start upload</Button>
@@ -109,6 +109,7 @@ function Upload() {
             </div>
           </Card>
           <Meter label="Today's upload limit (Drive)" used={todayUploadBytes} total={dailyUploadCap} />
+          <DriveNotice />
           <LeftAccentSection>
             <p>Uploads go in 8 MB chunks and resume after network drops. A thumbnail is created from the video automatically.</p>
           </LeftAccentSection>
@@ -116,4 +117,11 @@ function Upload() {
       </div>
     </>
   );
+}
+
+function DriveNotice() {
+  const { data } = useDriveStatus();
+  if (!data) return null;
+  if (data.connected) return <p className="text-fine text-spruce">Google Drive connected — uploads will be saved to Drive.</p>;
+  return <p className="text-fine text-red-600">Google Drive not connected. Go to Profile to connect, or uploads will be saved locally only.</p>;
 }

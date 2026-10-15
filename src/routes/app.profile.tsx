@@ -1,10 +1,11 @@
-import { KeyRound, Save } from "lucide-react";
+import { KeyRound, Save, HardDrive, Check } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button, Card, CardTitle } from "@/design-system/design-system-updated-53e58f";
 import { PageHeader } from "@/components/PageHeader";
 import { useAuth } from "@/lib/auth-context";
-import { useProfile, useUpdateProfile, useChangePassword } from "@/lib/hooks";
+import { useProfile, useUpdateProfile, useChangePassword, useDriveStatus, useConnectDrive } from "@/lib/hooks";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({ meta: [{ title: "Profile | Packing Video Hub" }, { name: "description", content: "Edit your name, photo and password." }] }),
@@ -25,6 +26,25 @@ function Profile() {
   useEffect(() => {
     if (profileData?.user?.fullName) setName(profileData.user.fullName);
   }, [profileData?.user?.fullName]);
+
+  const { data: driveStatus } = useDriveStatus();
+  const connectDrive = useConnectDrive();
+  const qc = useQueryClient();
+
+  const handleConnectDrive = useCallback(() => {
+    connectDrive.mutate(undefined, {
+      onSuccess: (url) => {
+        const popup = window.open(url, "google-drive-auth", "width=500,height=600");
+        const handler = (e: MessageEvent) => {
+          if (e.data === "google-drive-connected") {
+            qc.invalidateQueries({ queryKey: ["drive-status"] });
+            window.removeEventListener("message", handler);
+          }
+        };
+        window.addEventListener("message", handler);
+      },
+    });
+  }, [connectDrive, qc]);
 
   return (
     <>
@@ -69,6 +89,27 @@ function Profile() {
           </form>
         </Card>
       </div>
+
+      {(user?.role === "super_admin" || user?.role === "admin") && (
+        <Card className="mt-8">
+          <CardTitle>Google Drive</CardTitle>
+          <div className="mt-6 flex items-center gap-4">
+            {driveStatus?.connected ? (
+              <div className="flex items-center gap-2 text-spruce">
+                <Check className="h-5 w-5" aria-hidden />
+                <span>Google Drive connected. Uploads will be saved to Drive.</span>
+              </div>
+            ) : (
+              <>
+                <p className="text-fine">Connect Google Drive to upload packing videos directly to your Drive.</p>
+                <Button onClick={handleConnectDrive} disabled={connectDrive.isPending}>
+                  <HardDrive className="h-4 w-4" aria-hidden />Connect Google Drive
+                </Button>
+              </>
+            )}
+          </div>
+        </Card>
+      )}
     </>
   );
 }

@@ -59,7 +59,7 @@ function Backups() {
                   <option value={90}>90 days</option><option value={180}>180 days</option><option value={365}>1 year</option>
                 </select></label>
               <label><span className="field-label">Drive backup folder</span>
-                <input className="field" readOnly value="/Backups/Northwind Store" /></label>
+                <input className="field" readOnly value="/Backups" /></label>
               <p className="text-fine">You'll get an email when each backup finishes or fails.</p>
             </div>
           ) : (

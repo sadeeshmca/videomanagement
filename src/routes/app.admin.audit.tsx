@@ -30,7 +30,7 @@ function AuditLog() {
   return (
     <>
       <PageHeader eyebrow="Super Admin" title="Audit log"><Button onClick={exportCsv}><Download className="h-4 w-4" aria-hidden />Export CSV</Button></PageHeader>
-      <label className="mb-6 block max-w-md"><span className="field-label">Filter</span><input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="login, video.uploaded…" /></label>
+      <label className="mb-6 block max-w-md"><span className="field-label">Filter</span><input className="field" value={q} onChange={(e) => setQ(e.target.value)} /></label>
       <p className="text-fine mb-4">Entries can't be edited or deleted.</p>
       <div className="overflow-x-auto">
         <Table variant="document">

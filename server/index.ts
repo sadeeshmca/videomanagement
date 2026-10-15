@@ -13,6 +13,7 @@ import broadcastsRoutes from "./routes/broadcasts.js";
 import uploadRoutes from "./routes/upload.js";
 import profileRoutes from "./routes/profile.js";
 import sitesRoutes from "./routes/sites.js";
+import googleAuthRoutes from "./routes/google-auth.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -44,6 +45,7 @@ app.use(broadcastsRoutes);
 app.use(uploadRoutes);
 app.use(profileRoutes);
 app.use(sitesRoutes);
+app.use(googleAuthRoutes);
 
 // Serve static files in production
 const clientDir = path.join(__dirname, "..", "dist");

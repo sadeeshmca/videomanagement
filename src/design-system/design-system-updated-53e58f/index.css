@@ -1,6 +1,5 @@
 /* Perficient 2026 design system — @import must precede other statements. */
 @import "./styles/tokens.css";
-@import "./styles/fonts.css";
 @import "./styles/base.css";
 @import "./styles/surfaces.css";
 @import "./styles/components.css";

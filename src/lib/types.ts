@@ -27,6 +27,8 @@ export interface Video {
   customerPhone: string | null;
   title: string;
   tags: string[];
+  driveFileId: string | null;
+  driveWebViewLink: string | null;
   sizeBytes: number;
   isPublic: boolean;
   orderDate: string;

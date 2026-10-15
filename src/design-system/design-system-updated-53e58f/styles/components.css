@@ -211,10 +211,10 @@
 .card-title {
   font-family: var(--font-display);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 1.05;
-  font-size: var(--card-title-size, clamp(32px, 4vw, 64px));
+  text-transform: none;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  font-size: var(--card-title-size, 1.5rem);
 }
 
 @media (max-width: 768px) {
