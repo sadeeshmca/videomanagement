@@ -14,6 +14,7 @@ import uploadRoutes from "./routes/upload.js";
 import profileRoutes from "./routes/profile.js";
 import sitesRoutes from "./routes/sites.js";
 import googleAuthRoutes from "./routes/google-auth.js";
+import { startDriveRetryWorker } from "./drive-retry.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -67,4 +68,5 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT} (${isProduction ? "production" : "development"})`);
+  startDriveRetryWorker();
 });

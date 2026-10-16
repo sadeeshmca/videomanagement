@@ -10,7 +10,7 @@ import { requireAuth, logAudit } from "../middleware/auth.js";
 import { isDriveConnected, ensureSiteFolder, uploadFile } from "../google-drive.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const TMP_DIR = path.resolve(__dirname, "..", "..", "videos_tmp");
+export const TMP_DIR = path.resolve(__dirname, "..", "..", "videos_tmp");
 
 if (!fs.existsSync(TMP_DIR)) {
   fs.mkdirSync(TMP_DIR, { recursive: true });
@@ -25,8 +25,6 @@ function sanitize(s: string): string {
 }
 
 router.post("/api/upload", requireAuth, upload.single("file"), async (req, res) => {
-  let localPath: string | null = null;
-
   try {
     const userId = req.user!.userId;
     const { orderId, sku, customerPhone, title, tags, siteId } = req.body;
@@ -40,7 +38,8 @@ router.post("/api/upload", requireAuth, upload.single("file"), async (req, res) 
     const file = req.file;
     const sizeBytes = file ? file.size : Number(req.body.sizeBytes) || 0;
 
-    // Step 1: Save file locally to videos_tmp
+    // Step 1: Save file locally
+    let localPath: string | null = null;
     if (file) {
       const ext = path.extname(file.originalname) || ".mp4";
       const localName = `${sanitize(orderId)}_${sanitize(path.basename(file.originalname, ext))}${ext}`;
@@ -49,35 +48,40 @@ router.post("/api/upload", requireAuth, upload.single("file"), async (req, res) 
       console.log(`  Local copy saved: ${localPath}`);
     }
 
-    // Step 2: Upload to Google Drive
+    // Step 2: Try uploading to Google Drive
     let driveFileId: string | null = null;
     let driveWebViewLink: string | null = null;
+    let status = "ready";
 
     if (file && await isDriveConnected()) {
-      const [site] = await db.select().from(schema.sites).where(eq(schema.sites.id, siteId));
-      if (site) {
-        const folderId = await ensureSiteFolder(site.name, site.driveFolderId);
+      try {
+        const [site] = await db.select().from(schema.sites).where(eq(schema.sites.id, siteId));
+        if (site) {
+          const folderId = await ensureSiteFolder(site.name, site.driveFolderId);
+          if (folderId !== site.driveFolderId) {
+            await db.update(schema.sites).set({ driveFolderId: folderId }).where(eq(schema.sites.id, siteId));
+          }
 
-        if (folderId !== site.driveFolderId) {
-          await db.update(schema.sites).set({ driveFolderId: folderId }).where(eq(schema.sites.id, siteId));
+          const driveFileName = `${sanitize(orderId)}_${file.originalname}`;
+          const result = await uploadFile(folderId, driveFileName, file.buffer, file.mimetype);
+          driveFileId = result.fileId;
+          driveWebViewLink = result.webViewLink;
+          console.log(`  Uploaded to Drive: ${driveFileId}`);
+
+          // Delete local copy after successful upload
+          if (localPath && fs.existsSync(localPath)) {
+            fs.unlinkSync(localPath);
+            console.log(`  Local copy deleted: ${localPath}`);
+            localPath = null;
+          }
         }
-
-        const driveFileName = `${sanitize(orderId)}_${file.originalname}`;
-        const result = await uploadFile(folderId, driveFileName, file.buffer, file.mimetype);
-        driveFileId = result.fileId;
-        driveWebViewLink = result.webViewLink;
-        console.log(`  Uploaded to Drive: ${driveFileId}`);
-
-        // Step 3: Delete local copy after successful Drive upload
-        if (localPath && fs.existsSync(localPath)) {
-          fs.unlinkSync(localPath);
-          console.log(`  Local copy deleted: ${localPath}`);
-          localPath = null;
-        }
+      } catch (driveErr) {
+        console.error("  Drive upload failed, will retry in background:", driveErr);
+        status = "pending_drive";
       }
     }
 
-    // Step 4: Save to database
+    // Step 3: Save to database
     const [video] = await db.insert(schema.videos).values({
       siteId,
       ownerId: userId,
@@ -91,7 +95,9 @@ router.post("/api/upload", requireAuth, upload.single("file"), async (req, res) 
       orderDate: new Date().toISOString().slice(0, 10),
       driveFileId,
       driveWebViewLink,
+      localPath,
       mimeType: file?.mimetype ?? null,
+      status,
     }).returning();
 
     const today = new Date().toISOString().slice(0, 10);
@@ -108,10 +114,6 @@ router.post("/api/upload", requireAuth, upload.single("file"), async (req, res) 
     res.status(201).json(video);
   } catch (err) {
     console.error("Upload error:", err);
-    // Keep the local copy on failure so the video isn't lost
-    if (localPath && fs.existsSync(localPath)) {
-      console.log(`  Local copy kept after error: ${localPath}`);
-    }
     res.status(500).json({ error: "Failed to upload video" });
   }
 });

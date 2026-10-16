@@ -53,6 +53,7 @@ export const videos = pgTable("videos", {
   tags: text("tags").array().notNull().default([]),
   driveFileId: text("drive_file_id"),
   driveWebViewLink: text("drive_web_view_link"),
+  localPath: text("local_path"),
   thumbnailUrl: text("thumbnail_url"),
   mimeType: text("mime_type"),
   sizeBytes: bigint("size_bytes", { mode: "number" }).notNull().default(0),
