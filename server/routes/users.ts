@@ -1,9 +1,11 @@
 import { Router } from "express";
+import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import { eq, ilike, sql } from "drizzle-orm";
 import { db } from "../db.js";
 import * as schema from "../../drizzle/schema.js";
 import { requireAuth, requireSuperAdmin, logAudit } from "../middleware/auth.js";
+import { sendInviteEmail, isMailConfigured } from "../mailer.js";
 
 const router = Router();
 
@@ -54,11 +56,12 @@ router.post("/api/users/invite", requireAuth, requireSuperAdmin, async (req, res
       return;
     }
 
-    const tempPassword = await bcrypt.hash("changeme123", 10);
+    const tempPassword = crypto.randomBytes(6).toString("base64url");
+    const passwordHash = await bcrypt.hash(tempPassword, 10);
 
     const [user] = await db.insert(schema.users).values({
       email,
-      passwordHash: tempPassword,
+      passwordHash,
     }).returning();
 
     await db.insert(schema.profiles).values({
@@ -75,6 +78,15 @@ router.post("/api/users/invite", requireAuth, requireSuperAdmin, async (req, res
 
     await logAudit(req.user!.userId, siteId || null, "admin.invited", email);
 
+    const [inviterProfile] = await db.select().from(schema.profiles).where(eq(schema.profiles.id, req.user!.userId));
+    const inviterName = inviterProfile?.fullName || "An admin";
+
+    try {
+      await sendInviteEmail(email, tempPassword, inviterName);
+    } catch (mailErr) {
+      console.error("Failed to send invite email:", mailErr);
+    }
+
     res.status(201).json({
       id: user.id,
       email,
@@ -82,6 +94,7 @@ router.post("/api/users/invite", requireAuth, requireSuperAdmin, async (req, res
       role: "admin",
       siteId: siteId || null,
       suspended: false,
+      emailSent: isMailConfigured(),
     });
   } catch (err) {
     console.error("Invite error:", err);
@@ -134,6 +147,14 @@ router.delete("/api/users/:id", requireAuth, requireSuperAdmin, async (req, res)
     console.error("User delete error:", err);
     res.status(500).json({ error: "Failed to delete user" });
   }
+});
+
+router.get("/api/smtp-status", requireAuth, requireSuperAdmin, async (_req, res) => {
+  res.json({
+    configured: isMailConfigured(),
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    user: process.env.SMTP_USER ? `${process.env.SMTP_USER.slice(0, 3)}***` : null,
+  });
 });
 
 export default router;

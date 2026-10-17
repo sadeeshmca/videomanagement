@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { db } from "../db.js";
 import * as schema from "../../drizzle/schema.js";
 import { requireAuth, logAudit } from "../middleware/auth.js";
-import { isDriveConnected, ensureSiteFolder, uploadFile } from "../google-drive.js";
+import { isDriveConnected, ensureSiteFolder, ensureMonthFolder, uploadFile } from "../google-drive.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TMP_DIR = path.resolve(__dirname, "..", "..", "videos_tmp");
@@ -62,8 +62,9 @@ router.post("/api/upload", requireAuth, upload.single("file"), async (req, res) 
             await db.update(schema.sites).set({ driveFolderId: folderId }).where(eq(schema.sites.id, siteId));
           }
 
+          const monthFolderId = await ensureMonthFolder(folderId);
           const driveFileName = `${sanitize(orderId)}_${file.originalname}`;
-          const result = await uploadFile(folderId, driveFileName, file.buffer, file.mimetype);
+          const result = await uploadFile(monthFolderId, driveFileName, file.buffer, file.mimetype);
           driveFileId = result.fileId;
           driveWebViewLink = result.webViewLink;
           console.log(`  Uploaded to Drive: ${driveFileId}`);

@@ -115,6 +115,116 @@ export async function uploadFile(
   };
 }
 
+export async function ensureMonthFolder(parentFolderId: string, date?: Date): Promise<string> {
+  const d = date ?? new Date();
+  const monthName = d.toLocaleString("en-US", { month: "long", year: "numeric" });
+  const drive = await getAuthedDrive();
+
+  const search = await drive.files.list({
+    q: `'${parentFolderId}' in parents and name = '${monthName}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+    fields: "files(id,name)",
+    spaces: "drive",
+  });
+
+  if (search.data.files?.length) {
+    return search.data.files[0].id!;
+  }
+
+  const res = await drive.files.create({
+    requestBody: {
+      name: monthName,
+      mimeType: "application/vnd.google-apps.folder",
+      parents: [parentFolderId],
+    },
+    fields: "id",
+  });
+
+  return res.data.id!;
+}
+
+export async function ensureSubfolder(parentFolderId: string, folderName: string): Promise<string> {
+  const drive = await getAuthedDrive();
+
+  const search = await drive.files.list({
+    q: `'${parentFolderId}' in parents and name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+    fields: "files(id,name)",
+    spaces: "drive",
+  });
+
+  if (search.data.files?.length) {
+    return search.data.files[0].id!;
+  }
+
+  const res = await drive.files.create({
+    requestBody: {
+      name: folderName,
+      mimeType: "application/vnd.google-apps.folder",
+      parents: [parentFolderId],
+    },
+    fields: "id",
+  });
+
+  return res.data.id!;
+}
+
+export async function moveFileToFolder(fileId: string, newFolderId: string): Promise<void> {
+  const drive = await getAuthedDrive();
+
+  const file = await drive.files.get({ fileId, fields: "parents" });
+  const previousParents = file.data.parents?.join(",") ?? "";
+
+  await drive.files.update({
+    fileId,
+    addParents: newFolderId,
+    removeParents: previousParents,
+    fields: "id,parents",
+  });
+}
+
+export async function listFilesInFolder(folderId: string): Promise<{ id: string; name: string }[]> {
+  const drive = await getAuthedDrive();
+  const files: { id: string; name: string }[] = [];
+  let pageToken: string | undefined;
+
+  do {
+    const res = await drive.files.list({
+      q: `'${folderId}' in parents and trashed = false`,
+      fields: "nextPageToken,files(id,name)",
+      spaces: "drive",
+      pageSize: 100,
+      pageToken,
+    });
+    for (const f of res.data.files ?? []) {
+      if (f.id && f.name) files.push({ id: f.id, name: f.name });
+    }
+    pageToken = res.data.nextPageToken ?? undefined;
+  } while (pageToken);
+
+  return files;
+}
+
+export async function listSubfolders(parentFolderId: string): Promise<{ id: string; name: string }[]> {
+  const drive = await getAuthedDrive();
+  const folders: { id: string; name: string }[] = [];
+  let pageToken: string | undefined;
+
+  do {
+    const res = await drive.files.list({
+      q: `'${parentFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+      fields: "nextPageToken,files(id,name)",
+      spaces: "drive",
+      pageSize: 100,
+      pageToken,
+    });
+    for (const f of res.data.files ?? []) {
+      if (f.id && f.name) folders.push({ id: f.id, name: f.name });
+    }
+    pageToken = res.data.nextPageToken ?? undefined;
+  } while (pageToken);
+
+  return folders;
+}
+
 export async function makePublic(fileId: string): Promise<void> {
   const drive = await getAuthedDrive();
   await drive.permissions.create({

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { eq, and, isNotNull } from "drizzle-orm";
 import { db } from "./db.js";
 import * as schema from "../drizzle/schema.js";
-import { isDriveConnected, ensureSiteFolder, uploadFile } from "./google-drive.js";
+import { isDriveConnected, ensureSiteFolder, ensureMonthFolder, uploadFile } from "./google-drive.js";
 
 const RETRY_INTERVAL = 60_000;
 const MAX_RETRIES = 5;
@@ -59,7 +59,8 @@ async function retryPendingUploads() {
         const filename = video.localPath.split("/").pop()!;
         const mimeType = video.mimeType || "video/mp4";
 
-        const result = await uploadFile(folderId, filename, buffer, mimeType);
+        const monthFolderId = await ensureMonthFolder(folderId);
+        const result = await uploadFile(monthFolderId, filename, buffer, mimeType);
         console.log(`[drive-retry] ${video.orderId}: uploaded to Drive (${result.fileId})`);
 
         await db.update(schema.videos)
