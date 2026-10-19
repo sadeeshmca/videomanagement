@@ -225,6 +225,22 @@ export async function listSubfolders(parentFolderId: string): Promise<{ id: stri
   return folders;
 }
 
+export async function downloadFileStream(fileId: string): Promise<NodeJS.ReadableStream> {
+  const drive = await getAuthedDrive();
+  const res = await drive.files.get({ fileId, alt: "media" }, { responseType: "stream" });
+  return res.data as unknown as NodeJS.ReadableStream;
+}
+
+export async function getFileWebViewLink(fileId: string): Promise<string> {
+  const drive = await getAuthedDrive();
+  await drive.permissions.create({
+    fileId,
+    requestBody: { role: "reader", type: "anyone" },
+  });
+  const res = await drive.files.get({ fileId, fields: "webViewLink" });
+  return res.data.webViewLink!;
+}
+
 export async function makePublic(fileId: string): Promise<void> {
   const drive = await getAuthedDrive();
   await drive.permissions.create({

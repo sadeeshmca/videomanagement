@@ -1,8 +1,8 @@
-import { DatabaseBackup, Download } from "lucide-react";
+import { DatabaseBackup, Download, Loader2 } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Badge, Button, Card, CardTitle, TBody, THead, Table } from "@/design-system/design-system-updated-53e58f";
 import { PageHeader } from "@/components/PageHeader";
-import { useBackups, useCreateBackup, useBackupSchedule, useUpdateBackupSchedule } from "@/lib/hooks";
+import { useBackups, useCreateBackup, useBackupSchedule, useUpdateBackupSchedule, useDownloadBackup } from "@/lib/hooks";
 import type { Backup } from "@/lib/types";
 import { addMonths, formatBytes } from "@/lib/format";
 
@@ -16,20 +16,30 @@ export function statusBadge(b: Backup) {
   return <Badge variant={v}>{b.status === "running" ? `running ${b.progress}%` : b.status}</Badge>;
 }
 
+function formatDate(d: string) {
+  return String(d).slice(0, 16).replace("T", " ");
+}
+
 function Backups() {
   const { data: backups = [] } = useBackups();
   const createBackup = useCreateBackup();
   const { data: schedule } = useBackupSchedule();
   const updateSchedule = useUpdateBackupSchedule();
+  const downloadBackup = useDownloadBackup();
 
   const next = schedule
     ? addMonths(new Date(schedule.startDate), schedule.intervalMonths).toISOString().slice(0, 10)
     : "-";
 
+  const hasRunning = backups.some((b) => b.status === "running" || b.status === "queued");
+
   return (
     <>
       <PageHeader eyebrow="ZIP archives in Google Drive" title="Backups">
-        <Button onClick={() => createBackup.mutate()}><DatabaseBackup className="h-4 w-4" aria-hidden />Back up now</Button>
+        <Button onClick={() => createBackup.mutate()} disabled={createBackup.isPending || hasRunning}>
+          {createBackup.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <DatabaseBackup className="h-4 w-4" aria-hidden />}
+          {hasRunning ? "Backup in progress…" : "Back up now"}
+        </Button>
       </PageHeader>
 
       <div className="grid-2 mb-12">
@@ -60,7 +70,7 @@ function Backups() {
                 </select></label>
               <label><span className="field-label">Drive backup folder</span>
                 <input className="field" readOnly value="/Backups" /></label>
-              <p className="text-fine">You'll get an email when each backup finishes or fails.</p>
+              <p className="text-fine">Completed backups are stored in the Backup folder on Google Drive.</p>
             </div>
           ) : (
             <p className="mt-6 text-fine">Loading…</p>
@@ -69,24 +79,41 @@ function Backups() {
       </div>
 
       <h2 className="h-dense mb-6">History</h2>
-      <div className="overflow-x-auto">
-        <Table>
-          <THead><tr><th>Started</th><th>Type</th><th>Status</th><th>Videos</th><th>Size</th><th>Expires</th><th>Download</th></tr></THead>
-          <TBody>
-            {backups.map((b) => (
-              <tr key={b.id}>
-                <td>{b.createdAt.slice(0, 16).replace("T", " ")}</td>
-                <td>{b.trigger}</td>
-                <td>{statusBadge(b)}</td>
-                <td>{b.videoCount}</td>
-                <td>{b.sizeBytes ? formatBytes(b.sizeBytes) : "-"}</td>
-                <td>{b.expiresAt?.slice(0, 10) ?? "-"}</td>
-                <td>{b.status === "completed" ? <a className="btn-link inline-flex" href="#" aria-label="Download ZIP" title="Download ZIP" onClick={(e) => e.preventDefault()}><Download className="h-4 w-4" /></a> : "-"}</td>
-              </tr>
-            ))}
-          </TBody>
-        </Table>
-      </div>
+      {backups.length === 0 ? (
+        <p className="text-fine">No backups yet. Click "Back up now" to create your first backup.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <THead><tr><th>Started</th><th>Type</th><th>Status</th><th>Videos</th><th>Size</th><th>Expires</th><th>Download</th></tr></THead>
+            <TBody>
+              {backups.map((b) => (
+                <tr key={b.id}>
+                  <td>{formatDate(b.createdAt)}</td>
+                  <td>{b.trigger}</td>
+                  <td>{statusBadge(b)}</td>
+                  <td>{b.videoCount}</td>
+                  <td>{b.sizeBytes ? formatBytes(b.sizeBytes) : "-"}</td>
+                  <td>{b.expiresAt ? String(b.expiresAt).slice(0, 10) : "-"}</td>
+                  <td>
+                    {b.status === "completed" ? (
+                      <button
+                        className="btn-link inline-flex"
+                        aria-label="Download ZIP"
+                        title="Download ZIP"
+                        onClick={() => downloadBackup.mutate(b.id)}
+                      >
+                        <Download className="h-4 w-4" />
+                      </button>
+                    ) : b.status === "running" || b.status === "queued" ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    ) : "-"}
+                  </td>
+                </tr>
+              ))}
+            </TBody>
+          </Table>
+        </div>
+      )}
     </>
   );
 }

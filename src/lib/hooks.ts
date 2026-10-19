@@ -101,6 +101,15 @@ export function useUpdateBackupSchedule() {
   });
 }
 
+export function useDownloadBackup() {
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { downloadLink } = await api.get<{ downloadLink: string }>(`/backups/${id}/download`);
+      window.open(downloadLink, "_blank");
+    },
+  });
+}
+
 export function useUsers(q?: string) {
   return useQuery({
     queryKey: ["users", q],

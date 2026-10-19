@@ -23,6 +23,9 @@ router.get("/api/backups", requireAuth, async (req, res) => {
         sizeBytes: schema.backups.sizeBytes,
         createdAt: schema.backups.createdAt,
         expiresAt: schema.backups.expiresAt,
+        error: schema.backups.error,
+        downloadLink: schema.backups.downloadLink,
+        driveFileId: schema.backups.driveFileId,
         userName: schema.profiles.fullName,
       })
       .from(schema.backups)
@@ -68,8 +71,21 @@ router.post("/api/backups", requireAuth, async (req, res) => {
 router.get("/api/backup-schedule", requireAuth, async (req, res) => {
   try {
     const userId = req.user!.userId;
-    const [schedule] = await db.select().from(schema.backupSchedules).where(eq(schema.backupSchedules.userId, userId));
-    res.json(schedule ?? null);
+    let [schedule] = await db.select().from(schema.backupSchedules).where(eq(schema.backupSchedules.userId, userId));
+
+    if (!schedule) {
+      const [profile] = await db.select().from(schema.profiles).where(eq(schema.profiles.id, userId));
+      [schedule] = await db.insert(schema.backupSchedules).values({
+        userId,
+        siteId: profile?.siteId ?? null,
+        intervalMonths: 3,
+        startDate: new Date().toISOString().slice(0, 10),
+        retentionDays: 180,
+        enabled: false,
+      }).returning();
+    }
+
+    res.json(schedule);
   } catch (err) {
     console.error("Schedule get error:", err);
     res.status(500).json({ error: "Failed to load schedule" });
@@ -105,6 +121,35 @@ router.put("/api/backup-schedule", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("Schedule update error:", err);
     res.status(500).json({ error: "Failed to update schedule" });
+  }
+});
+
+router.get("/api/backups/:id/download", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user!.userId;
+    const superAdmin = await isSuperAdmin(userId);
+    const backupId = req.params.id as string;
+    const [backup] = await db.select().from(schema.backups).where(eq(schema.backups.id, backupId));
+
+    if (!backup) {
+      res.status(404).json({ error: "Backup not found" });
+      return;
+    }
+
+    if (!superAdmin && backup.userId !== userId) {
+      res.status(403).json({ error: "Not authorized" });
+      return;
+    }
+
+    if (backup.status !== "completed" || !backup.downloadLink) {
+      res.status(400).json({ error: "Backup not available for download" });
+      return;
+    }
+
+    res.json({ downloadLink: backup.downloadLink });
+  } catch (err) {
+    console.error("Backup download error:", err);
+    res.status(500).json({ error: "Failed to get download link" });
   }
 });
 
